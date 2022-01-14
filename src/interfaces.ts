@@ -19,3 +19,7 @@ export enum ITreeType{
     vertical = "vertical",
     horizontal = "horizontal",
 }
+
+export interface ILayer{
+    layer: INode[];
+}
