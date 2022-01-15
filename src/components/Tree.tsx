@@ -1,21 +1,66 @@
-import React, { ReactElement } from "react";
-import { ILink, INode } from "../interfaces";
+import React, { ReactElement, useMemo, useRef } from "react";
+import { ILayer, ILink, INode, INodeComputed, TreeType } from "../types";
 import clsx from "clsx";
 import { useStyles } from "./styles";
+import {
+  createLayers,
+  createPropsStyles,
+  getLayerWithMaxNodes,
+} from "../helpers";
+import { CSSProperties } from "@material-ui/core/styles/withStyles";
+import DefaultNode from "./DefaultNode";
 
 interface Props {
   id?: string;
   nodes: INode[];
   links: ILink[];
-  unlockOnClick?: boolean;
-  onChange?: (newLinks: ILink[]) => void;
-  onNodeClick?: (id: string) => void;
-  onNodeHover?: (id: string) => void;
-  onNodeBlur?: (id: string) => void;
+  type?: TreeType;
+  showLinks?: boolean;
   className?: string;
+  style?: CSSProperties;
 }
 
+/** Deosnt support 2+ roots combining into 1 child */
 export const Tree = (props: Props): JSX.Element => {
-  const classes = useStyles();
-  return <div className={clsx(classes.treeRoot, props.className)}></div>;
+  const propStyles = createPropsStyles(props.type);
+  const classes = useStyles(propStyles);
+  const layers = useMemo(
+    () => createLayers(props.nodes, props.links),
+    [props.nodes, props.links]
+  );
+  const layerWithMaxNodes = useMemo(
+    () => getLayerWithMaxNodes(layers),
+    [layers]
+  );
+  const flexPercentageUnit = 100 / layerWithMaxNodes.nodes.length;
+  console.log(layers);
+
+  return (
+    <div
+      className={clsx(classes.treeRoot, props.className)}
+      style={props.style}
+    >
+      {layers.map((layer: ILayer, idx: number) => (
+        <div className={classes.layer} key={layer.level}>
+          {layer.nodes.map((node: INodeComputed) => {
+            let element = <DefaultNode node={node} key={node.id} />;
+            if (node.component) {
+              element = node.component;
+            }
+
+            const flexBasisStyle = `${node.children * flexPercentageUnit}%`;
+            return (
+              <div
+                style={{ flexBasis: flexBasisStyle }}
+                key={node.id}
+                className={classes.elementContainer}
+              >
+                {element}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
 };
