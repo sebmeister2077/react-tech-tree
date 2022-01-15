@@ -7,13 +7,22 @@ export interface INode{
     component?: ReactElement;
 }
 
-export interface ILink{
+/** Internal use */
+export interface INodeComputed{
     id: string;
+    isRoot?: boolean,
+    text?: string;
+    component?: ReactElement;
+    children: number;
+}
+
+export interface ILink{
+    id?: string;
     nodeA: string;
     nodeB: string;
 }
 
-export enum ITreeType{
+export enum TreeType{
     radial = "radial",
     toLeft = "toLeft",
     toRight = "toRight",
@@ -21,7 +30,8 @@ export enum ITreeType{
     toBottom = 'toBottom',
 }
 
+/** Internal use */
 export interface ILayer{
-    nodes: INode[];
+    nodes: INodeComputed[];
     level: number;
 }
