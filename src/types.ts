@@ -5,21 +5,23 @@ export interface INode{
     isRoot?: boolean,
     text?: string;
     component?: ReactElement;
-    //you can have multiple roots
 }
 
 export interface ILink{
     id: string;
-    from: string;
-    to: string;
+    nodeA: string;
+    nodeB: string;
 }
 
 export enum ITreeType{
     radial = "radial",
-    vertical = "vertical",
-    horizontal = "horizontal",
+    toLeft = "toLeft",
+    toRight = "toRight",
+    toTop = 'toTop',
+    toBottom = 'toBottom',
 }
 
 export interface ILayer{
-    layer: INode[];
+    nodes: INode[];
+    level: number;
 }
