@@ -8,12 +8,10 @@ export interface INode{
 }
 
 /** Internal use */
-export interface INodeComputed{
-    id: string;
-    isRoot?: boolean,
-    text?: string;
-    component?: ReactElement;
+export interface INodeComputed extends INode{
     children: number;
+    parents: number;
+    layer: number;
 }
 
 export interface ILink{

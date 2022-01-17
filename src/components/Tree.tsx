@@ -2,13 +2,10 @@ import React, { ReactElement, useMemo, useRef } from "react";
 import { ILayer, ILink, INode, INodeComputed, TreeType } from "../types";
 import clsx from "clsx";
 import { useStyles } from "./styles";
-import {
-  createLayers,
-  createPropsStyles,
-  getLayerWithMaxNodes,
-} from "../helpers";
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import DefaultNode from "./DefaultNode";
+import { createLayers, getLayerWithMaxNodes } from "../helpers/NodeHelper";
+import { createPropsStyles } from "../helpers/StyleHelper";
 
 interface Props {
   id?: string;

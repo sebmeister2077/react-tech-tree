@@ -1,63 +1,5 @@
-import { ILayer, ILink, INode, INodeComputed, TreeType } from "./types";
-
-function copyArray(arr: any) {
-    const newArr = new Array(0);
-    arr.forEach((obj: any) => {
-        newArr.push(copyObject(obj));
-    })
-    return newArr;
-}
-
-const isObjectArray = (obj: any): boolean => {
-    try {
-        obj.entries();
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-/** Copies any type of object/array of objects */
-export function copyObject(obj: any) {
-    if (obj == undefined)
-        return;
-    if (typeof obj !== 'object')
-        return obj;
-    
-    const isArray = isObjectArray(obj);
-    if (isArray)
-        return copyArray(obj);
-    const newObject = <typeof obj>{};
-    
-    const keys = Object.keys(obj);
-    keys.forEach((key: keyof (typeof obj)) => {
-        if (key == 'component')
-            newObject[key] = obj[key];
-        else
-            newObject[key] = copyObject(obj[key]);
-    })
-    
-    return newObject
-}
-
-function findAllRoots(nodes: INode[]): INodeComputed[] {
-    let arr = new Array<INodeComputed>(0);
-    for (let idx = 0; idx < nodes.length; idx++) {
-        const isRoot = nodes[idx].isRoot;
-        if (isRoot) {
-            const node = nodes[idx];
-            let newNode = <INodeComputed>{
-                id: node.id,
-                isRoot: node.isRoot,
-                text: node.text,
-                component: node.component,
-                children: 0,
-            }
-            arr.push(newNode);
-        }
-    }
-    return arr;
-}
+import { ILayer, ILink, INode, INodeComputed } from "../types";
+import { copyObject } from "./ObjectHelper";
 
 /** Creates a list of layers based on the input */
 export const createLayers = (nodes: INode[], links: ILink[]):ILayer[] => {
@@ -91,14 +33,16 @@ export const createLayers = (nodes: INode[], links: ILink[]):ILayer[] => {
         })
         
         const invalidNodePosition = count < nodeCount && newNodeQueue.length == 0;
-        if (invalidNodePosition)
+        if (invalidNodePosition) {
             throw new Error('There exists nodes which are neither connected nor are Root Nodes');
+        }
         
         let newLayer = <ILayer>{
             nodes: currentNodeQueue,
             level: layer,
         }
         arrLayers.push(newLayer); 
+        setNodesVisited(currentNodeQueue, visitedNodes);
         currentNodeQueue = newNodeQueue.map((item: INode):INodeComputed => {
             let nodeComputed = item as INodeComputed;
             nodeComputed.children = 0;
@@ -114,6 +58,43 @@ export const createLayers = (nodes: INode[], links: ILink[]):ILayer[] => {
     arrLayers.push(newLayer); 
     
     return copyObject(arrLayers);
+}
+
+export function getLayerWithMaxNodes(layers: ILayer[]): ILayer{
+    let max = 0;
+    let layerIndex = 0;
+    layers.forEach((element, idx) => {
+        if (max < element.nodes.length) {
+            max = element.nodes.length;
+            layerIndex = idx;
+        }
+    });
+    
+    return layers[layerIndex];
+}
+
+export const getNodeChildrenCount = (node: INode, nodes: INode[], links: ILink[], layerBefore?: ILayer ): number => {
+    let children = findChildrenNodes(nodes, node, links, layerBefore ? layerBefore.nodes : undefined);
+    return children.length;
+}
+
+function findAllRoots(nodes: INode[]): INodeComputed[] {
+    let arr = new Array<INodeComputed>(0);
+    for (let idx = 0; idx < nodes.length; idx++) {
+        const isRoot = nodes[idx].isRoot;
+        if (isRoot) {
+            const node = nodes[idx];
+            let newNode = <INodeComputed>{
+                id: node.id,
+                isRoot: node.isRoot,
+                text: node.text,
+                component: node.component,
+                children: 0,
+            }
+            arr.push(newNode);
+        }
+    }
+    return arr;
 }
 
 function findChildrenNodes(nodes: INode[], node: INode, links: ILink[], visitedNodes?: INode[]): INode[] {
@@ -145,37 +126,3 @@ function findChildrenNodes(nodes: INode[], node: INode, links: ILink[], visitedN
 function setNodesVisited(newNodes: INode[], destinationNodes: INode[]) {
     destinationNodes.push(...newNodes);
 }
-
-export function getLayerWithMaxNodes(layers: ILayer[]): ILayer{
-    let max = 0;
-    let layerIndex = 0;
-    layers.forEach((element, idx) => {
-        if (max < element.nodes.length) {
-            max = element.nodes.length;
-            layerIndex = idx;
-        }
-    });
-    
-    return layers[layerIndex];
-}
-
-export const getNodeChildrenCount = (node: INode, nodes: INode[], links: ILink[], layerBefore?: ILayer ): number => {
-    let children = findChildrenNodes(nodes, node, links, layerBefore ? layerBefore.nodes : undefined);
-    return children.length;
-}
-
-export function createPropsStyles(type?: TreeType) {
-    switch (type) {
-        case TreeType.toBottom:
-            return { transform: "0deg" };
-        case TreeType.toLeft:
-            return { transform: "90deg" };
-        case TreeType.toTop:
-            return { transform: "180deg" };
-        case TreeType.toRight:
-            return { transform: "270deg" };
-        default:
-            return { transform: "0deg" };
-  }
-}
-
