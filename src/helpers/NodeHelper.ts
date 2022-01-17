@@ -1,5 +1,5 @@
 import { ILayer, ILink, INode, INodeComputed } from "../types";
-import { copyObject } from "./ObjectHelper";
+import { deepCopyObject } from "./ObjectHelper";
 
 /** Creates a list of layers based on the input */
 export const createLayers = (nodes: INode[], links: ILink[]):ILayer[] => {
@@ -57,7 +57,7 @@ export const createLayers = (nodes: INode[], links: ILink[]):ILayer[] => {
     }
     arrLayers.push(newLayer); 
     
-    return copyObject(arrLayers);
+    return deepCopyObject(arrLayers);
 }
 
 export function getLayerWithMaxNodes(layers: ILayer[]): ILayer{
