@@ -1,6 +1,55 @@
 import { ILayer, ILink, INode, INodeComputed } from "../types";
 import { deepCopyObject } from "./ObjectHelper";
 
+const findAllRoots = (nodes: INode[]): INodeComputed[] => {
+    let arr = new Array<INodeComputed>(0);
+    for (let idx = 0; idx < nodes.length; idx++) {
+        const isRoot = nodes[idx].isRoot;
+        if (isRoot) {
+            const node = nodes[idx];
+            let newNode = <INodeComputed>{
+                id: node.id,
+                isRoot: node.isRoot,
+                text: node.text,
+                component: node.component,
+                children: 0,
+            }
+            arr.push(newNode);
+        }
+    }
+    return arr;
+}
+
+const findChildrenNodes = (nodes: INode[], node: INode, links: ILink[], visitedNodes?: INode[]): INode[] => {
+    let childrenArr = new Array<INode>(0);
+    const nodeId = node.id;
+
+    let childrensId = links.filter((link: ILink) => link.nodeA == nodeId || link.nodeB == nodeId)
+        .map((link: ILink) => {
+            if (link.nodeA == node.id)
+                return link.nodeB;
+            return link.nodeA;
+        })
+    
+    childrensId.filter((id: string) => {
+        if (!visitedNodes)
+            return true;
+        
+        let wasVisited = visitedNodes.find(n => n.id == id);
+        return !wasVisited;
+    }).forEach((id: string) => {
+        let child = nodes.find(n => n.id == id) as INode;
+        if(!child.isRoot)
+        childrenArr.push(child);
+    })
+
+    return childrenArr;
+}
+
+const setNodesVisited = (newNodes: INode[], destinationNodes: INode[]) => {
+    destinationNodes.push(...newNodes);
+}
+
 /** Creates a list of layers based on the input */
 export const createLayers = (nodes: INode[], links: ILink[]):ILayer[] => {
     let arrLayers = new Array<ILayer>(0);
@@ -40,8 +89,10 @@ export const createLayers = (nodes: INode[], links: ILink[]):ILayer[] => {
         let newLayer = <ILayer>{
             nodes: currentNodeQueue,
             level: layer,
+            nodesCount: currentNodeQueue.length,
         }
         arrLayers.push(newLayer); 
+
         setNodesVisited(currentNodeQueue, visitedNodes);
         currentNodeQueue = newNodeQueue.map((item: INode):INodeComputed => {
             let nodeComputed = item as INodeComputed;
@@ -52,15 +103,16 @@ export const createLayers = (nodes: INode[], links: ILink[]):ILayer[] => {
     }
     
     let newLayer = <ILayer>{
-            nodes: currentNodeQueue,
-            level: layer,
+        nodes: currentNodeQueue,
+        level: layer,
+        nodesCount: currentNodeQueue.length,
     }
     arrLayers.push(newLayer); 
     
     return deepCopyObject(arrLayers);
 }
 
-export function getLayerWithMaxNodes(layers: ILayer[]): ILayer{
+export const getLayerWithMaxNodes = (layers: ILayer[]): ILayer => {
     let max = 0;
     let layerIndex = 0;
     layers.forEach((element, idx) => {
@@ -76,53 +128,4 @@ export function getLayerWithMaxNodes(layers: ILayer[]): ILayer{
 export const getNodeChildrenCount = (node: INode, nodes: INode[], links: ILink[], layerBefore?: ILayer ): number => {
     let children = findChildrenNodes(nodes, node, links, layerBefore ? layerBefore.nodes : undefined);
     return children.length;
-}
-
-function findAllRoots(nodes: INode[]): INodeComputed[] {
-    let arr = new Array<INodeComputed>(0);
-    for (let idx = 0; idx < nodes.length; idx++) {
-        const isRoot = nodes[idx].isRoot;
-        if (isRoot) {
-            const node = nodes[idx];
-            let newNode = <INodeComputed>{
-                id: node.id,
-                isRoot: node.isRoot,
-                text: node.text,
-                component: node.component,
-                children: 0,
-            }
-            arr.push(newNode);
-        }
-    }
-    return arr;
-}
-
-function findChildrenNodes(nodes: INode[], node: INode, links: ILink[], visitedNodes?: INode[]): INode[] {
-    let childrenArr = new Array<INode>(0);
-    const nodeId = node.id;
-
-    let childrensId = links.filter((link: ILink) => link.nodeA == nodeId || link.nodeB == nodeId)
-        .map((link: ILink) => {
-            if (link.nodeA == node.id)
-                return link.nodeB;
-            return link.nodeA;
-        })
-    
-    childrensId.filter((id: string) => {
-        if (!visitedNodes)
-            return true;
-        
-        let wasVisited = visitedNodes.find(n => n.id == id);
-        return !wasVisited;
-    }).forEach((id: string) => {
-        let child = nodes.find(n => n.id == id) as INode;
-        if(!child.isRoot)
-        childrenArr.push(child);
-    })
-
-    return childrenArr;
-}
-
-function setNodesVisited(newNodes: INode[], destinationNodes: INode[]) {
-    destinationNodes.push(...newNodes);
 }

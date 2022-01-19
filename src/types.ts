@@ -32,4 +32,5 @@ export enum TreeType{
 export interface ILayer{
     nodes: INodeComputed[];
     level: number;
+    nodesCount: number;
 }
