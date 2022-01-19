@@ -34,8 +34,8 @@ export function deepCopyObject(obj: any, customKeys?: Array<string|number|symbol
         newObject[key] = copyKeysOfTypeObject(obj, key, customKeys);
     })
 
-    const objectCantbeCopied = JSON.stringify(newObject) === '{}'; // ex: window.navigator
-    if (objectCantbeCopied)
+    const cantAccessObjectKeys = keys.length == 0; // ex: window.navigator
+    if (cantAccessObjectKeys)
         return obj;
     
     return newObject
