@@ -1,8 +1,24 @@
+const copyArray = (arr: any) => {
+    const newArr = new Array(0);
+    arr.forEach((obj: any) => {
+        newArr.push(deepCopyObject(obj));
+    })
+    return newArr;
+}
+
+const copyKeysOfTypeObject = (obj: any, key: string | number | symbol, customKeys?: Array<string | number | symbol>) => {
+    if (!key)
+        return;
+    if (customKeys && customKeys.includes(key))
+        return obj[key];
+    return deepCopyObject(obj[key]);
+}
+
 /** Copies any type of object/array of objects 
  * @param obj The object to be copied
  * @param customKeys A list of keys that are to be excluded from deepCopy
 */
-export function deepCopyObject(obj: any, customKeys?: Array<string|number|symbol>) {
+export const deepCopyObject = (obj: any, customKeys?: Array<string|number|symbol>) => {
     if (obj == undefined)
         return;
     if (typeof obj !== 'object')
@@ -39,18 +55,3 @@ export function deepCopyObject(obj: any, customKeys?: Array<string|number|symbol
     return newObject
 }
 
-function copyArray(arr: any) {
-    const newArr = new Array(0);
-    arr.forEach((obj: any) => {
-        newArr.push(deepCopyObject(obj));
-    })
-    return newArr;
-}
-
-function copyKeysOfTypeObject(obj: any, key: string | number | symbol, customKeys?: Array<string | number | symbol>) {
-    if (!key)
-        return;
-    if (customKeys && customKeys.includes(key))
-        return obj[key];
-    return deepCopyObject(obj[key]);
-}
