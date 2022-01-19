@@ -20,16 +20,22 @@ const findAllRoots = (nodes: INode[]): INodeComputed[] => {
     return arr;
 }
 
-const findChildrenNodes = (nodes: INode[], node: INode, links: ILink[], visitedNodes?: INode[]): INode[] => {
-    let childrenArr = new Array<INode>(0);
-    const nodeId = node.id;
+const filterNodeLinks = (link: ILink, nodeId: string) => link.nodeA == nodeId || link.nodeB == nodeId
 
-    let childrensId = links.filter((link: ILink) => link.nodeA == nodeId || link.nodeB == nodeId)
-        .map((link: ILink) => {
-            if (link.nodeA == node.id)
+const getChildrensIds = (links: ILink[], nodeId: string): string[] => {
+    const extractAsStrings = (link: ILink) => {
+            if (link.nodeA == nodeId)
                 return link.nodeB;
             return link.nodeA;
-        })
+    }
+    
+   return links.filter((link: ILink) => filterNodeLinks(link, nodeId)).map(extractAsStrings)
+}
+
+const findChildrenNodes = (nodes: INode[], node: INode, links: ILink[], visitedNodes?: INode[]): INode[] => {
+    let childrenArr = new Array<INode>(0);
+
+    let childrensId = getChildrensIds(links, node.id);
     
     childrensId.filter((id: string) => {
         if (!visitedNodes)
@@ -38,7 +44,7 @@ const findChildrenNodes = (nodes: INode[], node: INode, links: ILink[], visitedN
         let wasVisited = visitedNodes.find(n => n.id == id);
         return !wasVisited;
     }).forEach((id: string) => {
-        let child = nodes.find(n => n.id == id) as INode;
+        let child = nodes.find(n => n.id == id);
         if(!child.isRoot)
         childrenArr.push(child);
     })
@@ -46,8 +52,8 @@ const findChildrenNodes = (nodes: INode[], node: INode, links: ILink[], visitedN
     return childrenArr;
 }
 
-const setNodesVisited = (newNodes: INode[], destinationNodes: INode[]) => {
-    destinationNodes.push(...newNodes);
+const setNodesVisited = (nodesToBeAdded: INode[], destinationNodes: INode[]) => {
+    destinationNodes.push(...nodesToBeAdded);
 }
 
 /** Creates a list of layers based on the input */
@@ -123,9 +129,4 @@ export const getLayerWithMaxNodes = (layers: ILayer[]): ILayer => {
     });
     
     return layers[layerIndex];
-}
-
-export const getNodeChildrenCount = (node: INode, nodes: INode[], links: ILink[], layerBefore?: ILayer ): number => {
-    let children = findChildrenNodes(nodes, node, links, layerBefore ? layerBefore.nodes : undefined);
-    return children.length;
 }
