@@ -23,10 +23,8 @@ export function deepCopyObject(obj: any, customKeys?: Array<string|number|symbol
         return obj.cloneNode(true);
     
     const isHtmlComponent = obj.$$typeof != undefined;
-    if (isHtmlComponent) {
-        console.log(isHtmlComponent)
+    if (isHtmlComponent)
         return obj;
-    }
 
     const newObject = <typeof obj>{};
     const keys = Object.keys(obj);
