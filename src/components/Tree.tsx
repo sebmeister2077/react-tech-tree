@@ -15,6 +15,7 @@ interface Props {
   showLinks?: boolean;
   className?: string;
   style?: CSSProperties;
+  // allowMoreParents?: boolean;
 }
 
 /** Deosnt support 2+ roots combining into 1 child */
