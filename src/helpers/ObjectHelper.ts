@@ -26,7 +26,7 @@ export const deepCopyObject = (obj: any, customKeys?: Array<string|number|symbol
     if (typeof obj === 'function')
         return obj;
         
-    const isArray = obj.length > -1;
+    const isArray = 'length' in obj;
     if (isArray)
         return copyArray(obj);
     
@@ -34,7 +34,7 @@ export const deepCopyObject = (obj: any, customKeys?: Array<string|number|symbol
     if(isObjectDate)
         return new Date(obj);
     
-    const isDOM = obj.nodeType && typeof obj.cloneNode == "function";
+    const isDOM = 'nodeType' in obj && typeof obj.cloneNode == "function";
     if (isDOM)
         return obj.cloneNode(true);
     
@@ -54,4 +54,3 @@ export const deepCopyObject = (obj: any, customKeys?: Array<string|number|symbol
     
     return newObject
 }
-
