@@ -44,13 +44,15 @@ export const deepCopyObject = (obj: any, customKeys?: Array<string|number|symbol
 
     const newObject = <typeof obj>{};
     const keys = Object.keys(obj);
+    
+    const cantAccessObjectKeys = keys.length == 0; // ex: window.navigator
+    if (cantAccessObjectKeys)
+        return obj;
+    
     keys.forEach((key: keyof (typeof obj)) => {
         newObject[key] = copyKeysOfTypeObject(obj, key, customKeys);
     })
 
-    const cantAccessObjectKeys = keys.length == 0; // ex: window.navigator
-    if (cantAccessObjectKeys)
-        return obj;
     
     return newObject
 }
