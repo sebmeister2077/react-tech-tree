@@ -2,10 +2,10 @@ import React, { ReactElement, useMemo, useRef } from "react";
 import { ILayer, ILink, INode, INodeComputed, TreeType } from "../types";
 import clsx from "clsx";
 import { useStyles } from "./styles";
-import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import DefaultNode from "./DefaultNode";
 import { createLayers, getLayerWithMaxNodes } from "../helpers/NodeHelper";
 import { createPropsStyles } from "../helpers/StyleHelper";
+import { CSSProperties } from "@mui/styles";
 
 interface Props {
   id?: string;
@@ -14,7 +14,7 @@ interface Props {
   type?: TreeType;
   showLinks?: boolean;
   className?: string;
-  style?: CSSProperties;
+  style?: CSSProperties
   // allowMoreParents?: boolean;
 }
 
