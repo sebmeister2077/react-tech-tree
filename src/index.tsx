@@ -1,20 +1,21 @@
+import { Button } from "@mui/material";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Tree } from "./components/Tree";
 import { ILink, INode } from "./types";
 
 const nodes: INode[] = [
-  { id: "A0", text: "A, Parent of c,d,e,f", isRoot: true },
+  { id: "A0", text: "A, Parent of b,d,e,f", isRoot: true, component:<Button>Click me, im 'A', parent of b,d,e,f</Button>  },
   { id: "B0", text: "B, parent of g,h" },
   { id: "C0", text: "C, parent of i", isRoot: true },
   { id: "D0", text: "Hello its D" },
-  { id: "E0", text: "I, parent of O,J" },
+  { id: "E0", text: "E, parent of O,J" },
   { id: "F0", text: "F, parent of M,K" },
   { id: "G0", text: "Hello its G" },
   { id: "H0", text: "Hello its H" },
   { id: "I", text: "Hello its I" },
   { id: "J", text: "Hello its J" },
-  { id: "K", text: "C, parent of N" },
+  { id: "K", text: "K, parent of N" },
   { id: "L", text: "Hello its L" },
   { id: "M", text: "Hello its M" },
   { id: "N", text: "N, parent of L" },
