@@ -27,6 +27,4 @@ export class Point{
     getX = () => this.x;
 
     getY = () => this.y;
-
-    
 }

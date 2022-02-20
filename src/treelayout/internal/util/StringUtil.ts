@@ -11,9 +11,9 @@ export class StringUtil {
      *         (i.e. Java String Literal)
      * 
      */
-    static quote(s: string): string | null {
+    static quote(s: string | null): string {
         if (s == null) {
-            return null;
+            return "null";
         }
 
         let result: string = "";
