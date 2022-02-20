@@ -19,5 +19,14 @@ export class Point{
         return p.x == this.x && p.y == this.y;
     }
 
+    setLocation = (x: number, y: number): void => {
+        this.x = x;
+        this.y = y;
+    }
+
+    getX = () => this.x;
+
+    getY = () => this.y;
+
     
 }
