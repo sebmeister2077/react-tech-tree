@@ -14,8 +14,8 @@ export class Rectangle {
 	height: number;
 	width: number;
 
-	#x2: number; //second x coord
-	#y2: number; //second y coord
+	private x2: number; //second x coord
+	private y2: number; //second y coord
 
 	constructor(props?: Rectangle | Partial<RectangleProps>) {
 		this.x = props?.x ?? 0;
@@ -23,15 +23,15 @@ export class Rectangle {
 		this.height = props?.height ?? 0;
 		this.width = props?.width ?? 0;
 
-		this.#x2 = this.x + this.width;
-		this.#y2 = this.y + this.height;
+		this.x2 = this.x + this.width;
+		this.y2 = this.y + this.height;
 
 		Rectangle.validateRect(this);
 	}
 
-	getX2 = () => this.#x2;
+	getX2 = () => this.x2;
 
-	getY2 = () => this.#y2;
+	getY2 = () => this.y2;
 
 	createIntersection(r: Rectangle): Rectangle | null {
 		if (!this.intersects(r)) return null;
@@ -39,22 +39,22 @@ export class Rectangle {
 		let res = new Rectangle();
 
 		res.x = this.x;
-		if (this.#isInsideAxisX(r.x)) {
+		if (this.isInsideAxisX(r.x)) {
 			res.x = r.x;
 		}
 
 		res.y = this.y;
-		if (this.#isInsideAxisY(r.y)) {
+		if (this.isInsideAxisY(r.y)) {
 			res.y = r.y;
 		}
 
 		res.width = this.width - (this.x - res.x); //shorten the width if x has moved
-		if (this.#isInsideAxisX(r.x + r.width)) {
+		if (this.isInsideAxisX(r.x + r.width)) {
 			res.width = this.width - (r.x + r.width); //move the width inwards
 		}
 
 		res.height = this.height - (this.y - res.y); //shorten the width if x has moved
-		if (this.#isInsideAxisY(r.y + r.height)) {
+		if (this.isInsideAxisY(r.y + r.height)) {
 			res.height = this.height - (r.y + r.height); //move the width inwards
         }
         
@@ -66,9 +66,9 @@ export class Rectangle {
 		let res = new Rectangle();
 		res.x = min(this.x, r.x);
 		res.y = min(this.y, r.y);
-		res.#x2 = max(this.#x2, r.#x2);
-		res.#y2 = max(this.#y2, r.#y2);
-		res.#recalculateSize();
+		res.x2 = max(this.x2, r.x2);
+		res.y2 = max(this.y2, r.y2);
+		res.recalculateSize();
 
 		return res;
 	}
@@ -84,10 +84,10 @@ export class Rectangle {
 	};
 
 	intersects = (r: Rectangle): boolean => {
-		let isXInside = this.#isInsideAxisX(r.x);
-		let isWidthInside = this.#isInsideAxisX(r.x + r.width);
-		let isYInside = this.#isInsideAxisY(r.y);
-		let isHeightInside = this.#isInsideAxisY(r.y + r.height);
+		let isXInside = this.isInsideAxisX(r.x);
+		let isWidthInside = this.isInsideAxisX(r.x + r.width);
+		let isYInside = this.isInsideAxisY(r.y);
+		let isHeightInside = this.isInsideAxisY(r.y + r.height);
 
 		return isHeightInside || isWidthInside || isXInside || isYInside;
 	};
@@ -98,27 +98,27 @@ export class Rectangle {
 		this.height = r.height;
 		this.width = r.width;
 
-		this.#x2 = this.x + this.width;
-		this.#y2 = this.y + this.height;
+		this.x2 = this.x + this.width;
+		this.y2 = this.y + this.height;
 	}
 
     /** Recalculates the x2,y2 coords based on the width,height */
 	recalculate2ndCoords() {
-		this.#x2 = this.x + this.width;
-		this.#y2 = this.y + this.height;
+		this.x2 = this.x + this.width;
+		this.y2 = this.y + this.height;
 	}
 
-	#recalculateSize() {
-		this.height = this.#x2 - this.x;
-		this.width = this.#y2 - this.y;
+	private recalculateSize() {
+		this.height = this.x2 - this.x;
+		this.width = this.y2 - this.y;
 	}
 
-	#isInsideAxisX = (x: number): boolean => {
+	private isInsideAxisX = (x: number): boolean => {
 		let isOutsideX = x < this.x && x > this.x + this.width;
 		return !isOutsideX;
 	};
 
-	#isInsideAxisY = (y: number): boolean => {
+	private isInsideAxisY = (y: number): boolean => {
 		let isOutsideY = y < this.y && y > this.y + this.height;
 		return !isOutsideY;
 	};
