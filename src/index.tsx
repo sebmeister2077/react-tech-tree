@@ -4,6 +4,8 @@ import ReactDOM from "react-dom";
 import { Tree } from "./components/Tree";
 import { ILink, INode } from "./types";
 
+
+/** Demo */
 const nodes: INode[] = [
   { id: "A0", text: "A, Parent of b,d,e,f", isRoot: true, component:<Button>Click me, im 'A', parent of b,d,e,f</Button>  },
   { id: "B0", text: "B, parent of g,h" },
