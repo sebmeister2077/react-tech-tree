@@ -1,8 +1,8 @@
 import { AlignmentInLevel, Configuration, Location } from "./Configuration";
 import { NodeExtentProvider } from "./NodeExtentProvider";
 import { TreeForTreeLayout } from "./TreeForTreeLayout";
-import { Point } from "./util/Point";
-import { Rectangle } from "./util/Rectangle";
+import { Point } from "./internal/util/types/Point";
+import { Rectangle } from "./internal/util/types/Rectangle";
 import { Contract } from './internal/util/Contract';
 import { DumpConfiguration } from "./internal/DumpConfig";
 import { StringUtil } from "./internal/util/StringUtil";
@@ -18,7 +18,7 @@ import { StringUtil } from "./internal/util/StringUtil";
  * 
  * @param <TreeNode> Type of elements used as nodes in the tree
  */
-class TreeLayout<TreeNode> {
+export class TreeLayout<TreeNode> {
 	private readonly  tree: TreeForTreeLayout<TreeNode>;
 	private readonly nodeExtentProvider: NodeExtentProvider<TreeNode>;
 	private readonly configuration: Configuration<TreeNode>;
